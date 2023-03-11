@@ -7,6 +7,7 @@ import {Vec3} from "./vec3";
 import {createPlayer} from "../entities/createPlayer";
 import {createInputBroadcasterSystem} from "../systems/createInputBroadcasterSystem";
 import {createCameraDirectorSystem} from "../systems/createCameraDirectorSystem";
+import {createPlatformGeneratorSystem} from "../systems/createPlatformGeneratorSystem";
 
 
 class GameLevel extends Scene3D {
@@ -51,6 +52,9 @@ class GameLevel extends Scene3D {
         );
         this.universe.registerSystem(
             "cameraDirectorSystem", createCameraDirectorSystem(this)
+        );
+        this.universe.registerSystem(
+            "platformGeneratorSystem", createPlatformGeneratorSystem(this)
         );
 
         createDebugCube(this, new Vec3());

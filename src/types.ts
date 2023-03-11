@@ -25,5 +25,6 @@ export type SystemList = [
     "debugCubeColourSystem",
     "inputBroadcasterSystem",
     "playerSystem",
-    "cameraDirectorSystem"
+    "cameraDirectorSystem",
+    "platformGeneratorSystem"
 ]
