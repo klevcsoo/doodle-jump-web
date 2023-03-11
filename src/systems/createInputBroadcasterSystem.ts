@@ -1,6 +1,6 @@
 import {EntitySystem} from "necst";
-import {ComponentMap, SystemList} from "../ecsTypes";
-import {currentInput} from "../input";
+import {ComponentMap, SystemList} from "../types";
+import {currentInput} from "../core/input";
 
 export function createInputBroadcasterSystem(): EntitySystem<ComponentMap, SystemList> {
     return ({createView}) => {

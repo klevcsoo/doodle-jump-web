@@ -1,7 +1,7 @@
-import {GameLevel} from "../level";
-import {Vec3} from "../vec3";
+import {GameLevel} from "../core/level";
+import {Vec3} from "../core/vec3";
 import {ExtendedMesh, ExtendedObject3D, THREE} from "enable3d";
-import {createInputReceiver} from "../input";
+import {createInputReceiver} from "../core/input";
 import {lerp} from "../utils";
 import {DebugDisplay} from "../ui/DebugDisplay";
 

@@ -1,7 +1,7 @@
 import {EntitySystem} from "necst";
-import {ComponentMap, SystemList} from "../ecsTypes";
-import {Vec3} from "../vec3";
-import {GameLevel} from "../level";
+import {ComponentMap, SystemList} from "../types";
+import {Vec3} from "../core/vec3";
+import {GameLevel} from "../core/level";
 
 const CAMERA_MOVEMENT_LERP_ALPHA = .25;
 const CAMERA_ROTATION_LERP_ALPHA = .04;

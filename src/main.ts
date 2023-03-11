@@ -1,6 +1,6 @@
-import "./style.css"
-import {Project, PhysicsLoader as AmmoPhysicsLoader} from "enable3d";
-import {GameLevel} from "./level";
+import "./style.css";
+import {PhysicsLoader as AmmoPhysicsLoader, Project} from "enable3d";
+import {GameLevel} from "./core/level";
 
 // config and project loader
 const config: ConstructorParameters<typeof Project>[ 0 ] = {

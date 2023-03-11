@@ -1,12 +1,12 @@
 import {Scene3D, THREE} from "enable3d";
 import {createUniverse, Universe} from "necst";
-import {DebugDisplay} from "./ui/DebugDisplay";
-import {ComponentMap, SystemList} from "./ecsTypes";
-import {createDebugCube} from "./entities/createDebugCube";
+import {DebugDisplay} from "../ui/DebugDisplay";
+import {ComponentMap, SystemList} from "../types";
+import {createDebugCube} from "../entities/createDebugCube";
 import {Vec3} from "./vec3";
-import {createPlayer} from "./entities/createPlayer";
-import {createInputBroadcasterSystem} from "./systems/createInputBroadcasterSystem";
-import {createCameraDirectorSystem} from "./systems/createCameraDirectorSystem";
+import {createPlayer} from "../entities/createPlayer";
+import {createInputBroadcasterSystem} from "../systems/createInputBroadcasterSystem";
+import {createCameraDirectorSystem} from "../systems/createCameraDirectorSystem";
 
 
 class GameLevel extends Scene3D {
