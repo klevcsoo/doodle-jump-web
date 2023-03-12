@@ -9,7 +9,6 @@ import {createCameraDirectorSystem} from "../systems/createCameraDirectorSystem"
 import {createPlatformGenerator} from "../entities/createPlatformGenerator";
 import {getGameConfig} from "./config";
 
-
 class GameLevel extends Scene3D {
     public universe: Universe<ComponentMap, SystemList>;
 
