@@ -3,7 +3,7 @@ import {PhysicsLoader as AmmoPhysicsLoader, Project} from "enable3d";
 import {GameLevel} from "./core/level";
 import {loadGameConfig} from "./core/config";
 
-fetch("/game.cfg").then(value => value.text()).then(cfgContent => {
+fetch("/doodle-jump-web/game.cfg").then(value => value.text()).then(cfgContent => {
     // game config loading
     loadGameConfig(cfgContent);
 
@@ -12,5 +12,5 @@ fetch("/game.cfg").then(value => value.text()).then(cfgContent => {
         scenes: [GameLevel],
         antialias: true
     };
-    AmmoPhysicsLoader('/lib/ammo', () => new Project(config));
+    AmmoPhysicsLoader('/doodle-jump-web/lib/ammo', () => new Project(config));
 });
