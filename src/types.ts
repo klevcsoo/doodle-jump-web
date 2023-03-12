@@ -43,7 +43,8 @@ export type SystemList = [
     "platformGeneratorSystem",
     "platformSystem",
     "collectableSystem",
-    "shadowUpdaterSystem"
+    "shadowUpdaterSystem",
+    "persistenceSystem"
 ]
 
 export type PlatformType = {

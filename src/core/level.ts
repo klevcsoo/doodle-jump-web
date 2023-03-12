@@ -9,6 +9,7 @@ import {createCameraDirectorSystem} from "../systems/createCameraDirectorSystem"
 import {createPlatformGenerator} from "../entities/createPlatformGenerator";
 import {getGameConfig} from "./config";
 import {createShadowUpdaterSystem} from "../systems/createShadowUpdaterSystem";
+import {createPersistenceSystem} from "../systems/createPersistenceSystem";
 
 class GameLevel extends Scene3D {
     public universe: Universe<ComponentMap, SystemList>;
@@ -65,6 +66,10 @@ class GameLevel extends Scene3D {
         this.universe.registerSystem(
             "shadowUpdaterSystem", createShadowUpdaterSystem(this)
         );
+        this.universe.registerSystem(
+            "persistenceSystem", createPersistenceSystem()
+        );
+        this.universe.scheduleSystem("persistenceSystem", 5, "seconds");
 
         createPlatformGenerator(this);
         createPlayer(this, new Vec3());

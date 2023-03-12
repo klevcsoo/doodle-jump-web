@@ -11,6 +11,7 @@ import {getGameConfig} from "../core/config";
 export function createPlayer(level: GameLevel, at: Vec3) {
     const playerName = getGameConfig("OBJECT.NAME.PLAYER", false);
     const jumpSensorName = getGameConfig("OBJECT.NAME.PLAYER_JUMP_SENSOR", false);
+    const starsKey = getGameConfig("STORAGE.KEY.STARS", false);
 
     const geometry = new THREE.CapsuleGeometry(.5, 1);
     const material = new THREE.MeshLambertMaterial({
@@ -52,7 +53,7 @@ export function createPlayer(level: GameLevel, at: Vec3) {
         altitude: 0,
         isOnPlatform: false,
         isOnBoostPlatform: false,
-        starsCollected: 0
+        starsCollected: parseInt(localStorage.getItem(starsKey) ?? "0")
     });
     level.universe.attachComponent(uuid, "inputReceiver", createInputReceiver());
     level.universe.attachComponent(uuid, "physicsObject", object3D);
