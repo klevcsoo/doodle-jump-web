@@ -53,6 +53,7 @@ export function createCollectable(level: GameLevel, at: Vec3) {
 function createCollectableSystem(level: GameLevel): EntitySystem<ComponentMap, SystemList> {
     const playerName = getGameConfig("OBJECT.NAME.PLAYER", false);
     const jumpSensorName = getGameConfig("OBJECT.NAME.PLAYER_JUMP_SENSOR", false);
+    const pickupCommand = getGameConfig("COMMAND.COLLECTABLE.PICKUP", false);
 
     return ({createView, sendCommand}) => {
         const view = createView("collectable", "physicsObject", "collisionSensor");
@@ -72,11 +73,13 @@ function createCollectableSystem(level: GameLevel): EntitySystem<ComponentMap, S
             }
 
             if (collectable.pickup) {
-                level.destroy(physicsObject);
-                level.physics.destroy(physicsObject);
+                // destroying an object causes a "memory access out of bound"
+                // exception for some reason
+                //
+                // need to find a way to destroy objects
                 level.universe.destroyEntity(uuid);
 
-                sendCommand("playerSystem", "collectable.pickup", collectable.type);
+                sendCommand("playerSystem", pickupCommand, collectable.type);
             }
         }
     };
