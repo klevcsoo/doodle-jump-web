@@ -16,7 +16,14 @@ export async function createPlatform(level: GameLevel, at: Vec3, type: PlatformT
         z: at.z,
         collisionFlags: type.oscillating || type.breakable ? 2 : 1,
         breakable: type.breakable
-    }, {lambert: {color: 0xffffff}});
+    }, {
+        lambert: {
+            color: type.boost ? 0xffff00 : 0xffffff
+        }
+    });
+    if (type.boost) {
+        object3D.userData["boostPlatform"] = true;
+    }
 
     const uuid = level.universe.createEntity();
     level.universe.attachComponent(uuid, "physicsObject", object3D);

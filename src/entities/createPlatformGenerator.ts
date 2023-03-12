@@ -8,6 +8,7 @@ import {createPlatform} from "./createPlatform";
 export function createPlatformGenerator(level: GameLevel) {
     const oscChance = getGameConfig("PLATFORM.GENERATION.OSCILLATING", true);
     const brChance = getGameConfig("PLATFORM.GENERATION.BREAKING", true);
+    const boostChance = getGameConfig("PLATFORM.GENERATION.BOOST", true);
     const maxHSpace = getGameConfig("PLATFORM.GENERATION.MAX_HORIZONTAL_SPACE", true);
     const maxVSpace = getGameConfig("PLATFORM.GENERATION.MAX_VERTICAL_SPACE", true);
     const minRelDistance = getGameConfig("PLATFORM.GENERATION.MIN_RELATIVE_DISTANCE", true);
@@ -15,11 +16,11 @@ export function createPlatformGenerator(level: GameLevel) {
 
     const halfMaxHSpace = maxHSpace / 2;
 
-    const uuid = level.universe.createEntity()
+    const uuid = level.universe.createEntity();
     level.universe.attachComponent(uuid, "platformGenerator", {
         lastPlatformX: 0,
         maxAltitude: 0
-    })
+    });
 
     level.universe.registerSystem("platformGeneratorSystem", ({createView}) => {
         const view = createView("platformGenerator");
@@ -53,7 +54,8 @@ export function createPlatformGenerator(level: GameLevel) {
             // decide on platform type
             const platformType: PlatformType = {
                 oscillating: takeChance(oscChance),
-                breakable: takeChance(brChance)
+                breakable: takeChance(brChance),
+                boost: takeChance(boostChance)
             };
 
             // generate the platform

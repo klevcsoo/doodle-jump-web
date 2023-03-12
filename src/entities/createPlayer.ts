@@ -44,7 +44,9 @@ export function createPlayer(level: GameLevel, at: Vec3) {
     level.physics.add.constraints.fixed(sensor.body, object3D.body, true);
 
     const uuid = level.universe.createEntity();
-    level.universe.attachComponent(uuid, "player", {altitude: 0, isOnGround: false});
+    level.universe.attachComponent(uuid, "player", {
+        altitude: 0, isOnPlatform: false, isOnBoostPlatform: false
+    });
     level.universe.attachComponent(uuid, "inputReceiver", createInputReceiver());
     level.universe.attachComponent(uuid, "physicsObject", object3D);
     level.universe.attachComponent(uuid, "collisionSensor", {active: false, obj: sensor});
@@ -59,6 +61,7 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
     const playerSpeed = getGameConfig("PLAYER.MOVEMENT.SPEED", true);
     const playerAcceleration = getGameConfig("PLAYER.MOVEMENT.ACCELERATION", true);
     const playerJumpVelocity = getGameConfig("PLAYER.JUMP.VELOCITY", true);
+    const platformBoostMult = getGameConfig("PLATFORM.BOOST.MULTIPLIER", true);
 
     return ({createView}) => {
         const view = createView(
@@ -71,8 +74,9 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
             // activating jump sensor if it hasn't been already
             if (!collisionSensor.active) {
                 // noinspection TypeScriptValidateJSTypes
-                collisionSensor.obj.body.on.collision((_, event) => {
-                    player.isOnGround = ["start", "collision"].includes(event);
+                collisionSensor.obj.body.on.collision((platform, event) => {
+                    player.isOnPlatform = ["start", "collision"].includes(event);
+                    player.isOnBoostPlatform = !!platform.userData?.boostPlatform;
                 });
                 collisionSensor.active = true;
             }
@@ -89,8 +93,14 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
             physicsObject.body.setVelocityX(xVel);
 
             // jumping if close to ground and falling
-            if (player.isOnGround && physicsObject.body.velocity.y <= 0) {
-                physicsObject.body.setVelocityY(playerJumpVelocity);
+            if (player.isOnPlatform && physicsObject.body.velocity.y <= 0) {
+                if (player.isOnBoostPlatform) {
+                    physicsObject.body.setVelocityY(
+                        playerJumpVelocity * platformBoostMult
+                    );
+                } else {
+                    physicsObject.body.setVelocityY(playerJumpVelocity);
+                }
             }
 
             // updating camera director position

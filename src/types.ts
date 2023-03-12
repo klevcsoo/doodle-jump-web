@@ -14,7 +14,8 @@ export type ComponentMap = {
     inputReceiver: InputReceiver
     player: {
         altitude: number
-        isOnGround: boolean
+        isOnPlatform: boolean
+        isOnBoostPlatform: boolean
     }
     cameraDirector: {
         position: Vec3
@@ -41,4 +42,5 @@ export type SystemList = [
 export type PlatformType = {
     oscillating: boolean
     breakable: boolean
+    boost: boolean
 }
