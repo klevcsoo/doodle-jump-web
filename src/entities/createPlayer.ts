@@ -20,6 +20,7 @@ export function createPlayer(level: GameLevel, at: Vec3) {
     object3D.add(mesh);
     at.y++;
     object3D.position.copy(at);
+    object3D.name = "PlayerObject";
 
     level.physics.add.existing(object3D, {
         shape: "convexMesh",
@@ -71,12 +72,19 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
         for (const {
             inputReceiver, physicsObject, collisionSensor, player, cameraDirector
         } of view) {
+
             // activating jump sensor if it hasn't been already
             if (!collisionSensor.active) {
                 // noinspection TypeScriptValidateJSTypes
                 collisionSensor.obj.body.on.collision((platform, event) => {
-                    player.isOnPlatform = ["start", "collision"].includes(event);
-                    player.isOnBoostPlatform = !!platform.userData?.boostPlatform;
+
+                    if (["start", "collision"].includes(event)) {
+                        player.isOnPlatform = !!platform.userData?.platform;
+                        player.isOnBoostPlatform = !!platform.userData?.boostPlatform;
+                    } else {
+                        player.isOnPlatform = player.isOnBoostPlatform = false;
+                    }
+
                 });
                 collisionSensor.active = true;
             }
@@ -93,7 +101,9 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
             physicsObject.body.setVelocityX(xVel);
 
             // jumping if close to ground and falling
+            DebugDisplay.update("player_data", player);
             if (player.isOnPlatform && physicsObject.body.velocity.y <= 0) {
+
                 if (player.isOnBoostPlatform) {
                     physicsObject.body.setVelocityY(
                         playerJumpVelocity * platformBoostMult
@@ -101,11 +111,13 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
                 } else {
                     physicsObject.body.setVelocityY(playerJumpVelocity);
                 }
+                
             }
 
             // updating camera director position
             cameraDirector.position.copy(physicsObject.position);
 
+            // setting player altitude
             player.altitude = Math.floor(physicsObject.position.y);
             DebugDisplay.update("player_altitude", player.altitude);
         }

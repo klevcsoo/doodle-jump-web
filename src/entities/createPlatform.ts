@@ -21,9 +21,8 @@ export async function createPlatform(level: GameLevel, at: Vec3, type: PlatformT
             color: type.boost ? 0xffff00 : 0xffffff
         }
     });
-    if (type.boost) {
-        object3D.userData["boostPlatform"] = true;
-    }
+    object3D.userData["platform"] = true;
+    object3D.userData["boostPlatform"] = type.boost;
 
     const uuid = level.universe.createEntity();
     level.universe.attachComponent(uuid, "physicsObject", object3D);

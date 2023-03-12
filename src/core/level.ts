@@ -37,7 +37,8 @@ class GameLevel extends Scene3D {
         });
 
         // set up scene (light, ground, grid, sky)
-        await this.warpSpeed("-orbitControls", "-camera", "-lookAtCenter");
+        const {ground} = await this.warpSpeed("-orbitControls", "-camera", "-lookAtCenter");
+        ground!.userData["platform"] = true;
 
         // enable physics debug if running locally or with console command
         this.physics.debug!.enable();

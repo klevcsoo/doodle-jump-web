@@ -4,6 +4,7 @@ import {isInRange, takeChance} from "../utils";
 import {PlatformType} from "../types";
 import {Vec3} from "../core/vec3";
 import {createPlatform} from "./createPlatform";
+import {createCollectable} from "./createCollectable";
 
 export function createPlatformGenerator(level: GameLevel) {
     const oscChance = getGameConfig("PLATFORM.GENERATION.OSCILLATING", true);
@@ -67,6 +68,12 @@ export function createPlatformGenerator(level: GameLevel) {
                     platformX, platformType
                 );
             });
+
+            // generate a star by chance if platform is not oscillating
+            if (takeChance(1) && !platformType.oscillating) {
+                platformVector.y++;
+                createCollectable(level, platformVector);
+            }
         }
     });
 }

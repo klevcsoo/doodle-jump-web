@@ -28,6 +28,11 @@ export type ComponentMap = {
         maxAltitude: number
         lastPlatformX: number
     }
+    collectable: {
+        type: "star"
+        sensingCollisions: boolean
+        collidingWithPlayer: boolean
+    }
 }
 
 export type SystemList = [
@@ -36,7 +41,8 @@ export type SystemList = [
     "playerSystem",
     "cameraDirectorSystem",
     "platformGeneratorSystem",
-    "platformSystem"
+    "platformSystem",
+    "collectableSystem"
 ]
 
 export type PlatformType = {
