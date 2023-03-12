@@ -6,6 +6,6 @@ export function isInRange(x: number, range: [number, number]): boolean {
     return range[0] < x && x < range[1];
 }
 
-export function shouldOccur(chance: number) {
+export function takeChance(chance: number) {
     return Math.random() <= chance;
 }

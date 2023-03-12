@@ -40,12 +40,13 @@ export function createPlayer(level: GameLevel, at: Vec3) {
         width: .8,
         height: .4,
         depth: .8,
-        collisionFlags: 4
+        collisionFlags: 4,
+        mass: 1e-8
     });
     level.physics.add.constraints.fixed(sensor.body, object3D.body, true);
 
     const uuid = level.universe.createEntity();
-    level.universe.attachComponent(uuid, "player", {altitude: 0, isOnGround: false});
+    level.universe.attachComponent(uuid, "player", {altitude: 0, isOnGround: true});
     level.universe.attachComponent(uuid, "inputReceiver", createInputReceiver());
     level.universe.attachComponent(uuid, "physicsObject", object3D);
     level.universe.attachComponent(uuid, "collisionSensor", {active: false, obj: sensor});

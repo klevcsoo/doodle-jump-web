@@ -19,6 +19,10 @@ export type ComponentMap = {
     cameraDirector: {
         position: Vec3
     }
+    platform: PlatformType & {
+        originalX: number
+        speed: number
+    }
 }
 
 export type SystemList = [
@@ -26,5 +30,11 @@ export type SystemList = [
     "inputBroadcasterSystem",
     "playerSystem",
     "cameraDirectorSystem",
-    "platformGeneratorSystem"
+    "platformGeneratorSystem",
+    "platformSystem"
 ]
+
+export type PlatformType = {
+    oscillating: boolean
+    breakable: boolean
+}
