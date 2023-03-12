@@ -9,6 +9,9 @@ import {ComponentMap, SystemList} from "../types";
 import {getGameConfig} from "../core/config";
 
 export function createPlayer(level: GameLevel, at: Vec3) {
+    const playerName = getGameConfig("OBJECT.NAME.PLAYER", false);
+    const jumpSensorName = getGameConfig("OBJECT.NAME.PLAYER_JUMP_SENSOR", false);
+
     const geometry = new THREE.CapsuleGeometry(.5, 1);
     const material = new THREE.MeshLambertMaterial({
         color: 0xffff00
@@ -20,7 +23,7 @@ export function createPlayer(level: GameLevel, at: Vec3) {
     object3D.add(mesh);
     at.y++;
     object3D.position.copy(at);
-    object3D.name = "PlayerObject";
+    object3D.name = playerName;
 
     level.physics.add.existing(object3D, {
         shape: "convexMesh",
@@ -33,7 +36,7 @@ export function createPlayer(level: GameLevel, at: Vec3) {
     object3D.body.setFriction(0);
 
     const sensor = new ExtendedObject3D();
-    sensor.name = "PlayerJumpSensor";
+    sensor.name = jumpSensorName;
     level.physics.add.existing(sensor, {
         shape: "box",
         width: .8,
@@ -66,6 +69,9 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
     const playerAcceleration = getGameConfig("PLAYER.MOVEMENT.ACCELERATION", true);
     const playerJumpVelocity = getGameConfig("PLAYER.JUMP.VELOCITY", true);
     const platformBoostMult = getGameConfig("PLATFORM.BOOST.MULTIPLIER", true);
+    const pickupCommand = getGameConfig("COMMAND.COLLECTABLE.PICKUP", false);
+    const platformTag = getGameConfig("OBJECT.TAG.PLATFORM", false);
+    const boostPlatformTag = getGameConfig("OBJECT.TAG.BOOST_PLATFORM", false);
 
     return ({createView, handleCommand}) => {
         const view = createView(
@@ -82,8 +88,12 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
                 collisionSensor.obj.body.on.collision((platform, event) => {
 
                     if (["start", "collision"].includes(event)) {
-                        player.isOnPlatform = !!platform.userData?.platform;
-                        player.isOnBoostPlatform = !!platform.userData?.boostPlatform;
+                        player.isOnPlatform = !!(
+                            platform.userData[platformTag]
+                        );
+                        player.isOnBoostPlatform = !!(
+                            platform.userData[boostPlatformTag]
+                        );
                     } else {
                         player.isOnPlatform = player.isOnBoostPlatform = false;
                     }
@@ -123,7 +133,7 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
             player.altitude = Math.floor(physicsObject.position.y);
 
             // handling collectable pickup
-            handleCommand("collectable.pickup", () => {
+            handleCommand(pickupCommand, () => {
                 player.starsCollected++;
             });
 

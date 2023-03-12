@@ -3,6 +3,7 @@ import {Vec3} from "../core/vec3";
 import {ExtendedObject3D, THREE} from "enable3d";
 import {EntitySystem} from "necst";
 import {ComponentMap, SystemList} from "../types";
+import {getGameConfig} from "../core/config";
 
 export function createCollectable(level: GameLevel, at: Vec3) {
     const geometry = new THREE.TorusGeometry(.4, .15, 8, 16);
@@ -18,7 +19,7 @@ export function createCollectable(level: GameLevel, at: Vec3) {
 
     level.physics.add.existing(object3D, {
         shape: "convexMesh",
-        mass: 15,
+        mass: 1e-8,
         collisionFlags: 2
     });
     level.add.existing(object3D);
@@ -50,6 +51,9 @@ export function createCollectable(level: GameLevel, at: Vec3) {
 }
 
 function createCollectableSystem(level: GameLevel): EntitySystem<ComponentMap, SystemList> {
+    const playerName = getGameConfig("OBJECT.NAME.PLAYER", false);
+    const jumpSensorName = getGameConfig("OBJECT.NAME.PLAYER_JUMP_SENSOR", false);
+
     return ({createView, sendCommand}) => {
         const view = createView("collectable", "physicsObject", "collisionSensor");
         for (const {collectable, physicsObject, collisionSensor, uuid} of view) {
@@ -60,7 +64,7 @@ function createCollectableSystem(level: GameLevel): EntitySystem<ComponentMap, S
 
                     collectable.pickup = (
                         ["start", "collision"].includes(event) &&
-                        ["PlayerObject", "PlayerJumpSensor"].includes(obj.name)
+                        [playerName, jumpSensorName].includes(obj.name)
                     );
 
                 });

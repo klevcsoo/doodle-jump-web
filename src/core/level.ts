@@ -7,6 +7,7 @@ import {createPlayer} from "../entities/createPlayer";
 import {createInputBroadcasterSystem} from "../systems/createInputBroadcasterSystem";
 import {createCameraDirectorSystem} from "../systems/createCameraDirectorSystem";
 import {createPlatformGenerator} from "../entities/createPlatformGenerator";
+import {getGameConfig} from "./config";
 
 
 class GameLevel extends Scene3D {
@@ -18,6 +19,8 @@ class GameLevel extends Scene3D {
     }
 
     public async init() {
+        const platformTag = getGameConfig("OBJECT.TAG.PLATFORM", false);
+
         // setup render size and resolution
         console.table({
             ["pixel_ratio"]: window.devicePixelRatio,
@@ -38,7 +41,7 @@ class GameLevel extends Scene3D {
 
         // set up scene (light, ground, grid, sky)
         const {ground} = await this.warpSpeed("-orbitControls", "-camera", "-lookAtCenter");
-        ground!.userData["platform"] = true;
+        ground!.userData[platformTag] = true;
 
         // enable physics debug if running locally or with console command
         this.physics.debug!.enable();

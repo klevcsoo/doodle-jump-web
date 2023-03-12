@@ -14,6 +14,7 @@ export function createPlatformGenerator(level: GameLevel) {
     const maxVSpace = getGameConfig("PLATFORM.GENERATION.MAX_VERTICAL_SPACE", true);
     const minRelDistance = getGameConfig("PLATFORM.GENERATION.MIN_RELATIVE_DISTANCE", true);
     const relMaxAlt = getGameConfig("PLATFORM.GENERATION.RELATIVE_MAX_ALTITUDE", true);
+    const collectableChance = getGameConfig("COLLECTABLE.GENERATION.CHANCE", true);
 
     const halfMaxHSpace = maxHSpace / 2;
 
@@ -64,7 +65,7 @@ export function createPlatformGenerator(level: GameLevel) {
             createPlatform(level, platformVector, platformType);
 
             // generate a star by chance if platform is not oscillating
-            if (takeChance(1) && !platformType.oscillating) {
+            if (takeChance(collectableChance) && !platformType.oscillating) {
                 platformVector.y++;
                 createCollectable(level, platformVector);
             }

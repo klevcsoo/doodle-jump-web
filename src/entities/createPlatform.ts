@@ -6,6 +6,8 @@ import {getGameConfig} from "../core/config";
 export function createPlatform(level: GameLevel, at: Vec3, type: PlatformType) {
     const platformOscDistance = getGameConfig("PLATFORM.OSCILLATION.DISTANCE", true);
     const platformOscVelocity = getGameConfig("PLATFORM.OSCILLATION.VELOCITY", true);
+    const platformTag = getGameConfig("OBJECT.TAG.PLATFORM", false);
+    const boostPlatformTag = getGameConfig("OBJECT.TAG.BOOST_PLATFORM", false);
 
     const object3D = level.physics.add.box({
         width: 2,
@@ -21,8 +23,8 @@ export function createPlatform(level: GameLevel, at: Vec3, type: PlatformType) {
             color: type.boost ? 0xffff00 : 0xffffff
         }
     });
-    object3D.userData["platform"] = true;
-    object3D.userData["boostPlatform"] = type.boost;
+    object3D.userData[platformTag] = true;
+    object3D.userData[boostPlatformTag] = type.boost;
 
     const uuid = level.universe.createEntity();
     level.universe.attachComponent(uuid, "physicsObject", object3D);
