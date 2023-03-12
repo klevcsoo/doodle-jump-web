@@ -5,6 +5,7 @@ import {getGameConfig} from "../core/config";
 
 export async function createPlatform(level: GameLevel, at: Vec3, type: PlatformType) {
     const platformOscDistance = getGameConfig("PLATFORM.OSCILLATION.DISTANCE", true);
+    const platformOscVelocity = getGameConfig("PLATFORM.OSCILLATION.VELOCITY", true);
 
     const object3D = level.physics.add.box({
         width: 2,
@@ -20,7 +21,7 @@ export async function createPlatform(level: GameLevel, at: Vec3, type: PlatformT
     const uuid = level.universe.createEntity();
     level.universe.attachComponent(uuid, "physicsObject", object3D);
     level.universe.attachComponent(uuid, "platform", {
-        ...type, originalX: at.x, speed: .05
+        ...type, originalX: at.x, speed: platformOscVelocity
     });
 
     level.universe.registerSystem("platformSystem", ({createView}) => {
