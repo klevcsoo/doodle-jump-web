@@ -2,12 +2,11 @@ import {Scene3D, THREE} from "enable3d";
 import {createUniverse, Universe} from "necst";
 import {DebugDisplay} from "../ui/DebugDisplay";
 import {ComponentMap, SystemList} from "../types";
-import {createDebugCube} from "../entities/createDebugCube";
 import {Vec3} from "./vec3";
 import {createPlayer} from "../entities/createPlayer";
 import {createInputBroadcasterSystem} from "../systems/createInputBroadcasterSystem";
 import {createCameraDirectorSystem} from "../systems/createCameraDirectorSystem";
-import {createPlatformGeneratorSystem} from "../systems/createPlatformGeneratorSystem";
+import {createPlatformGenerator} from "../entities/createPlatformGenerator";
 
 
 class GameLevel extends Scene3D {
@@ -53,11 +52,8 @@ class GameLevel extends Scene3D {
         this.universe.registerSystem(
             "cameraDirectorSystem", createCameraDirectorSystem(this)
         );
-        this.universe.registerSystem(
-            "platformGeneratorSystem", createPlatformGeneratorSystem(this)
-        );
 
-        createDebugCube(this, new Vec3());
+        createPlatformGenerator(this);
         createPlayer(this, new Vec3());
     }
 

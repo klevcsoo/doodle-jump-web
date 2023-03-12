@@ -43,7 +43,7 @@ export function createPlayer(level: GameLevel, at: Vec3) {
     level.physics.add.constraints.fixed(sensor.body, object3D.body, true);
 
     const uuid = level.universe.createEntity();
-    level.universe.attachComponent(uuid, "player", {altitude: 0, isOnGround: true});
+    level.universe.attachComponent(uuid, "player", {altitude: 0, isOnGround: false});
     level.universe.attachComponent(uuid, "inputReceiver", createInputReceiver());
     level.universe.attachComponent(uuid, "physicsObject", object3D);
     level.universe.attachComponent(uuid, "collisionSensor", {active: false, obj: sensor});
@@ -78,8 +78,8 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
 
             // calculating horizontal movement
             const horizontalMovement = (
-                Number(inputReceiver.keyboard.includes("KeyA")) * -1 +
-                Number(inputReceiver.keyboard.includes("KeyD"))
+                Number(inputReceiver.keyboard.includes("ArrowLeft")) * -1 +
+                Number(inputReceiver.keyboard.includes("ArrowRight"))
             );
             const xVel = lerp(
                 physicsObject.body.velocity.x, playerSpeed * horizontalMovement,

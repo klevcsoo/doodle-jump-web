@@ -23,6 +23,10 @@ export type ComponentMap = {
         originalX: number
         speed: number
     }
+    platformGenerator: {
+        maxAltitude: number
+        lastPlatformX: number
+    }
 }
 
 export type SystemList = [
