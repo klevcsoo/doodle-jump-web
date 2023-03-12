@@ -23,7 +23,8 @@ export function createPlayer(level: GameLevel, at: Vec3) {
 
     level.physics.add.existing(object3D, {
         shape: "convexMesh",
-        mass: 70
+        mass: 70,
+        collisionFlags: 4
     });
     level.add.existing(object3D);
     object3D.body.setLinearFactor(1, 1, 0);
