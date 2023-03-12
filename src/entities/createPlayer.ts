@@ -6,10 +6,7 @@ import {lerp} from "../utils";
 import {DebugDisplay} from "../ui/DebugDisplay";
 import {EntitySystem} from "necst";
 import {ComponentMap, SystemList} from "../types";
-
-const PLAYER_MOVEMENT_SPEED = 5;
-const PLAYER_ACCELERATION = .4;
-const PLAYER_JUMP_VELOCITY = 11;
+import {getGameConfig} from "../core/config";
 
 export function createPlayer(level: GameLevel, at: Vec3) {
     const geometry = new THREE.CapsuleGeometry(.5, 1);
@@ -54,45 +51,52 @@ export function createPlayer(level: GameLevel, at: Vec3) {
         position: Vec3.fromVec(object3D.position)
     });
 
-    level.universe.registerSystem("playerSystem", playerSystem);
+    level.universe.registerSystem("playerSystem", createPlayerSystem());
 }
 
-const playerSystem: EntitySystem<ComponentMap, SystemList> = ({createView}) => {
-    const view = createView(
-        "player", "inputReceiver", "physicsObject", "collisionSensor", "cameraDirector"
-    );
-    for (const {
-        inputReceiver, physicsObject, collisionSensor, player, cameraDirector
-    } of view) {
-        // activating jump sensor if it hasn't been already
-        if (!collisionSensor.active) {
-            // noinspection TypeScriptValidateJSTypes
-            collisionSensor.obj.body.on.collision((_, event) => {
-                player.isOnGround = ["start", "collision"].includes(event);
-            });
-            collisionSensor.active = true;
-        }
+function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
+    const playerSpeed = getGameConfig("PLAYER.MOVEMENT.SPEED", true);
+    const playerAcceleration = getGameConfig("PLAYER.MOVEMENT.ACCELERATION", true);
+    const playerJumpVelocity = getGameConfig("PLAYER.JUMP.VELOCITY", true);
 
-        // calculating horizontal movement
-        const horizontalMovement = (
-            Number(inputReceiver.keyboard.includes("KeyA")) * -1 +
-            Number(inputReceiver.keyboard.includes("KeyD"))
+    return ({createView}) => {
+        const view = createView(
+            "player", "inputReceiver", "physicsObject",
+            "collisionSensor", "cameraDirector"
         );
-        const xVel = lerp(
-            physicsObject.body.velocity.x, PLAYER_MOVEMENT_SPEED * horizontalMovement,
-            PLAYER_ACCELERATION
-        );
-        physicsObject.body.setVelocityX(xVel);
+        for (const {
+            inputReceiver, physicsObject, collisionSensor, player, cameraDirector
+        } of view) {
+            // activating jump sensor if it hasn't been already
+            if (!collisionSensor.active) {
+                // noinspection TypeScriptValidateJSTypes
+                collisionSensor.obj.body.on.collision((_, event) => {
+                    player.isOnGround = ["start", "collision"].includes(event);
+                });
+                collisionSensor.active = true;
+            }
 
-        // jumping if close to ground and falling
-        if (player.isOnGround && physicsObject.body.velocity.y <= 0) {
-            physicsObject.body.setVelocityY(PLAYER_JUMP_VELOCITY);
+            // calculating horizontal movement
+            const horizontalMovement = (
+                Number(inputReceiver.keyboard.includes("KeyA")) * -1 +
+                Number(inputReceiver.keyboard.includes("KeyD"))
+            );
+            const xVel = lerp(
+                physicsObject.body.velocity.x, playerSpeed * horizontalMovement,
+                playerAcceleration
+            );
+            physicsObject.body.setVelocityX(xVel);
+
+            // jumping if close to ground and falling
+            if (player.isOnGround && physicsObject.body.velocity.y <= 0) {
+                physicsObject.body.setVelocityY(playerJumpVelocity);
+            }
+
+            // updating camera director position
+            cameraDirector.position.copy(physicsObject.position);
+
+            player.altitude = Math.floor(physicsObject.position.y);
+            DebugDisplay.update("player_altitude", player.altitude);
         }
-
-        // updating camera director position
-        cameraDirector.position.copy(physicsObject.position);
-
-        player.altitude = Math.floor(physicsObject.position.y);
-        DebugDisplay.update("player_altitude", player.altitude);
-    }
-};
+    };
+}

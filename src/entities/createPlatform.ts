@@ -1,10 +1,11 @@
 import {GameLevel} from "../core/level";
 import {Vec3} from "../core/vec3";
 import {PlatformType} from "../types";
-
-const PLATFORM_OSCILLATION_DISTANCE = 2;
+import {getGameConfig} from "../core/config";
 
 export async function createPlatform(level: GameLevel, at: Vec3, type: PlatformType) {
+    const platformOscDistance = getGameConfig("PLATFORM.OSCILLATION.DISTANCE", true);
+
     const object3D = level.physics.add.box({
         width: 2,
         height: .4,
@@ -32,8 +33,8 @@ export async function createPlatform(level: GameLevel, at: Vec3, type: PlatformT
             physicsObject.position.x = physicsObject.position.x + platform.speed;
             physicsObject.body.needUpdate = true;
 
-            const minX = platform.originalX - PLATFORM_OSCILLATION_DISTANCE;
-            const maxX = platform.originalX + PLATFORM_OSCILLATION_DISTANCE;
+            const minX = platform.originalX - platformOscDistance;
+            const maxX = platform.originalX + platformOscDistance;
             if (
                 physicsObject.position.x <= minX ||
                 physicsObject.position.x >= maxX

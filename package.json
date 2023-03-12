@@ -13,6 +13,7 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
+    "config-ini-parser": "^1.6.1",
     "enable3d": "^0.25.3",
     "necst": "github:klevcsoo/necst"
   }
