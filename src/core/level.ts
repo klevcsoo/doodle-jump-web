@@ -8,9 +8,12 @@ import {createInputBroadcasterSystem} from "../systems/createInputBroadcasterSys
 import {createCameraDirectorSystem} from "../systems/createCameraDirectorSystem";
 import {createPlatformGenerator} from "../entities/createPlatformGenerator";
 import {getGameConfig} from "./config";
+import {createShadowUpdaterSystem} from "../systems/createShadowUpdaterSystem";
 
 class GameLevel extends Scene3D {
     public universe: Universe<ComponentMap, SystemList>;
+    public directionalLight: THREE.DirectionalLight | undefined;
+    public hemisphereLight: THREE.HemisphereLight | undefined;
 
     constructor() {
         super({key: "GameScene", enableXR: false});
@@ -39,8 +42,12 @@ class GameLevel extends Scene3D {
         });
 
         // set up scene (light, ground, grid, sky)
-        const {ground} = await this.warpSpeed("-orbitControls", "-camera", "-lookAtCenter");
+        const {
+            ground, lights
+        } = await this.warpSpeed("-orbitControls", "-camera", "-lookAtCenter");
         ground!.userData[platformTag] = true;
+        this.directionalLight = lights?.directionalLight;
+        this.hemisphereLight = lights?.hemisphereLight;
 
         // enable physics debug if running locally or with console command
         this.physics.debug!.enable();
@@ -54,6 +61,9 @@ class GameLevel extends Scene3D {
         );
         this.universe.registerSystem(
             "cameraDirectorSystem", createCameraDirectorSystem(this)
+        );
+        this.universe.registerSystem(
+            "shadowUpdaterSystem", createShadowUpdaterSystem(this)
         );
 
         createPlatformGenerator(this);

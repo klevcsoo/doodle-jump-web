@@ -42,7 +42,8 @@ export type SystemList = [
     "cameraDirectorSystem",
     "platformGeneratorSystem",
     "platformSystem",
-    "collectableSystem"
+    "collectableSystem",
+    "shadowUpdaterSystem"
 ]
 
 export type PlatformType = {
