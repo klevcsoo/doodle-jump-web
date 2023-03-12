@@ -3,7 +3,7 @@ import {Vec3} from "../core/vec3";
 import {PlatformType} from "../types";
 import {getGameConfig} from "../core/config";
 
-export async function createPlatform(level: GameLevel, at: Vec3, type: PlatformType) {
+export function createPlatform(level: GameLevel, at: Vec3, type: PlatformType) {
     const platformOscDistance = getGameConfig("PLATFORM.OSCILLATION.DISTANCE", true);
     const platformOscVelocity = getGameConfig("PLATFORM.OSCILLATION.VELOCITY", true);
 

@@ -61,13 +61,7 @@ export function createPlatformGenerator(level: GameLevel) {
 
             // generate the platform
             const platformVector = new Vec3(platformX, platformGenerator.maxAltitude, 0);
-            createPlatform(level, platformVector, platformType).then(() => {
-                console.log(
-                    "GENERATED PLATFORM: ",
-                    platformGenerator.maxAltitude,
-                    platformX, platformType
-                );
-            });
+            createPlatform(level, platformVector, platformType);
 
             // generate a star by chance if platform is not oscillating
             if (takeChance(1) && !platformType.oscillating) {
