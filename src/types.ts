@@ -23,7 +23,7 @@ export type ComponentMap = {
     }
     platform: PlatformType & {
         originalX: number
-        speed: number
+        movementDelay: number
     }
     platformGenerator: {
         maxAltitude: number
