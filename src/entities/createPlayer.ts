@@ -46,7 +46,10 @@ export function createPlayer(level: GameLevel, at: Vec3) {
 
     const uuid = level.universe.createEntity();
     level.universe.attachComponent(uuid, "player", {
-        altitude: 0, isOnPlatform: false, isOnBoostPlatform: false
+        altitude: 0,
+        isOnPlatform: false,
+        isOnBoostPlatform: false,
+        starsCollected: 0
     });
     level.universe.attachComponent(uuid, "inputReceiver", createInputReceiver());
     level.universe.attachComponent(uuid, "physicsObject", object3D);
@@ -64,7 +67,7 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
     const playerJumpVelocity = getGameConfig("PLAYER.JUMP.VELOCITY", true);
     const platformBoostMult = getGameConfig("PLATFORM.BOOST.MULTIPLIER", true);
 
-    return ({createView}) => {
+    return ({createView, handleCommand}) => {
         const view = createView(
             "player", "inputReceiver", "physicsObject",
             "collisionSensor", "cameraDirector"
@@ -101,7 +104,6 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
             physicsObject.body.setVelocityX(xVel);
 
             // jumping if close to ground and falling
-            DebugDisplay.update("player_data", player);
             if (player.isOnPlatform && physicsObject.body.velocity.y <= 0) {
 
                 if (player.isOnBoostPlatform) {
@@ -111,7 +113,7 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
                 } else {
                     physicsObject.body.setVelocityY(playerJumpVelocity);
                 }
-                
+
             }
 
             // updating camera director position
@@ -119,7 +121,15 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
 
             // setting player altitude
             player.altitude = Math.floor(physicsObject.position.y);
+
+            // handling collectable pickup
+            handleCommand("collectable.pickup", () => {
+                player.starsCollected++;
+            });
+
+            // printing to debug display
             DebugDisplay.update("player_altitude", player.altitude);
+            DebugDisplay.update("player_stars", player.starsCollected);
         }
     };
 }

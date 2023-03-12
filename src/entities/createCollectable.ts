@@ -23,37 +23,56 @@ export function createCollectable(level: GameLevel, at: Vec3) {
     });
     level.add.existing(object3D);
 
+    const sensor = new ExtendedObject3D();
+    sensor.name = `CollectableSensor_${object3D.name}`;
+    sensor.position.copy(at);
+    level.physics.add.existing(sensor, {
+        shape: "box",
+        width: 1.2,
+        height: 1.2,
+        depth: 1.2,
+        collisionFlags: 4,
+        mass: 1e-8
+    });
+    level.physics.add.constraints.fixed(sensor.body, object3D.body, true);
+
     const uuid = level.universe.createEntity();
     level.universe.attachComponent(uuid, "physicsObject", object3D);
+    level.universe.attachComponent(uuid, "collisionSensor", {
+        active: false,
+        obj: sensor
+    });
     level.universe.attachComponent(uuid, "collectable", {
-        type: "star", sensingCollisions: false, collidingWithPlayer: false
+        type: "star", pickup: false
     });
 
     level.universe.registerSystem("collectableSystem", createCollectableSystem(level));
 }
 
 function createCollectableSystem(level: GameLevel): EntitySystem<ComponentMap, SystemList> {
-    return ({createView}) => {
-        const view = createView("collectable", "physicsObject");
-        for (const {collectable, physicsObject, uuid} of view) {
+    return ({createView, sendCommand}) => {
+        const view = createView("collectable", "physicsObject", "collisionSensor");
+        for (const {collectable, physicsObject, collisionSensor, uuid} of view) {
 
-            if (!collectable.sensingCollisions) {
+            if (!collisionSensor.active) {
                 // noinspection TypeScriptValidateJSTypes
                 physicsObject.body.on.collision((obj, event) => {
 
-                    collectable.collidingWithPlayer = (
+                    collectable.pickup = (
                         ["start", "collision"].includes(event) &&
                         ["PlayerObject", "PlayerJumpSensor"].includes(obj.name)
                     );
 
                 });
-                collectable.sensingCollisions = true;
+                collisionSensor.active = true;
             }
 
-            if (collectable.collidingWithPlayer) {
+            if (collectable.pickup) {
                 level.destroy(physicsObject);
                 level.physics.destroy(physicsObject);
                 level.universe.destroyEntity(uuid);
+
+                sendCommand("playerSystem", "collectable.pickup", collectable.type);
             }
         }
     };

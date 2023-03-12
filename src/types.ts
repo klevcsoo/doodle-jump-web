@@ -16,6 +16,7 @@ export type ComponentMap = {
         altitude: number
         isOnPlatform: boolean
         isOnBoostPlatform: boolean
+        starsCollected: number
     }
     cameraDirector: {
         position: Vec3
@@ -30,8 +31,7 @@ export type ComponentMap = {
     }
     collectable: {
         type: "star"
-        sensingCollisions: boolean
-        collidingWithPlayer: boolean
+        pickup: boolean
     }
 }
 
