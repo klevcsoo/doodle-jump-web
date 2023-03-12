@@ -3,7 +3,7 @@ import {ComponentMap, SystemList} from "../types";
 import {Vec3} from "../core/vec3";
 import {GameLevel} from "../core/level";
 
-const CAMERA_MOVEMENT_LERP_ALPHA = .25;
+const CAMERA_MOVEMENT_LERP_ALPHA = .15;
 const CAMERA_ROTATION_LERP_ALPHA = .04;
 const CAMERA_Z_OFFSET = 20;
 
