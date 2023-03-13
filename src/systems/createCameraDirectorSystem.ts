@@ -23,7 +23,10 @@ export function createCameraDirectorSystem(
         const sumY = vectors.map(({y}) => y).reduce((a, b) => a + b);
         const sumZ = vectors.map(({z}) => z).reduce((a, b) => a + b);
         const len = vectors.length;
-        const targetVec = new Vec3(sumX / len, sumY / len, sumZ / len);
+        const currentY = level.camera.position.y;
+        const targetVec = new Vec3(
+            sumX / len, Math.max(currentY, sumY / len), sumZ / len
+        );
 
         // using linear interpolation to calculate new camera position
         const newCamPos = new Vec3(
