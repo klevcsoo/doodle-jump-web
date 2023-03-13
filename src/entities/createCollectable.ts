@@ -73,12 +73,7 @@ function createCollectableSystem(level: GameLevel): EntitySystem<ComponentMap, S
             }
 
             if (collectable.pickup) {
-                // destroying an object causes a "memory access out of bound"
-                // exception for some reason
-                //
-                // need to find a way to destroy objects
-                level.universe.destroyEntity(uuid);
-
+                level.deleteEntity(uuid);
                 sendCommand("playerSystem", pickupCommand, collectable.type);
             }
         }

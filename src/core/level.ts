@@ -1,4 +1,4 @@
-import {Scene3D, THREE} from "enable3d";
+import {ExtendedObject3D, Scene3D, THREE} from "enable3d";
 import {createUniverse, Universe} from "necst";
 import {DebugDisplay} from "../ui/DebugDisplay";
 import {ComponentMap, SystemList} from "../types";
@@ -15,6 +15,7 @@ class GameLevel extends Scene3D {
     public universe: Universe<ComponentMap, SystemList>;
     public directionalLight: THREE.DirectionalLight | undefined;
     public hemisphereLight: THREE.HemisphereLight | undefined;
+    private deletionQueue: (string | ExtendedObject3D)[] = [];
 
     constructor() {
         super({key: "GameScene", enableXR: false});
@@ -79,8 +80,31 @@ class GameLevel extends Scene3D {
         DebugDisplay.update("fps", Math.floor(1000 / delta));
 
         this.universe.update();
+
+        for (const obj of this.deletionQueue) {
+            if (typeof obj === "string") {
+                this.universe.destroyEntity(obj);
+                console.log("deleted entity:", obj);
+            } else {
+                this.destroy(obj);
+                console.log("deleted object:", obj.name);
+            }
+        }
+        this.deletionQueue = [];
+
+        const platformTag = getGameConfig("OBJECT.TAG.PLATFORM", false);
+        const platformCountScene = this.scene.children.filter(obj => {
+            return !!obj.userData[platformTag];
+        }).length;
+        DebugDisplay.update("platform_count_scene", platformCountScene);
+        let platformCountUniverse = 0;
+        for (const _ of this.universe.view("platform")) platformCountUniverse++;
+        DebugDisplay.update("platform_count_universe", platformCountUniverse);
     }
 
+    public deleteEntity(uuid: string, ...attachedObjects: ExtendedObject3D[]) {
+        this.deletionQueue.push(uuid, ...attachedObjects);
+    }
 }
 
 export {GameLevel};

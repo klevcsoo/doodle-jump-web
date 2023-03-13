@@ -8,6 +8,7 @@ export function createPlatform(level: GameLevel, at: Vec3, type: PlatformType) {
     const platformOscVelocity = getGameConfig("PLATFORM.OSCILLATION.VELOCITY", true);
     const platformTag = getGameConfig("OBJECT.TAG.PLATFORM", false);
     const boostPlatformTag = getGameConfig("OBJECT.TAG.BOOST_PLATFORM", false);
+    const maxVSpace = getGameConfig("PLATFORM.GENERATION.MAX_VERTICAL_SPACE", true);
 
     const object3D = level.physics.add.box({
         width: 2,
@@ -33,8 +34,20 @@ export function createPlatform(level: GameLevel, at: Vec3, type: PlatformType) {
     });
 
     level.universe.registerSystem("platformSystem", ({createView}, time) => {
+        let playerAltitude: number | null = null;
+        for (const {player} of createView("player")) {
+            playerAltitude = player.altitude;
+        }
+
         const view = createView("platform", "physicsObject");
-        for (const {platform, physicsObject} of view) {
+        for (const {platform, physicsObject, uuid} of view) {
+            if (
+                playerAltitude &&
+                physicsObject.position.y < playerAltitude - maxVSpace * 3
+            ) {
+                level.deleteEntity(uuid, physicsObject);
+            }
+
             if (!platform.oscillating) {
                 continue;
             }

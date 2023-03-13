@@ -25,13 +25,12 @@ export function createPlatformGenerator(level: GameLevel) {
     });
 
     level.universe.registerSystem("platformGeneratorSystem", ({createView}) => {
-        const view = createView("platformGenerator");
-        for (const {platformGenerator} of view) {
-            let playerAltitude: number | null = null;
-            for (const {player} of createView("player")) {
-                playerAltitude = player.altitude;
-            }
+        let playerAltitude: number | null = null;
+        for (const {player} of createView("player")) {
+            playerAltitude = player.altitude;
+        }
 
+        for (const {platformGenerator} of createView("platformGenerator")) {
             if (
                 !playerAltitude ||
                 playerAltitude + relMaxAlt < platformGenerator.maxAltitude
