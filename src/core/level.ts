@@ -93,13 +93,14 @@ class GameLevel extends Scene3D {
         this.deletionQueue = [];
 
         const platformTag = getGameConfig("OBJECT.TAG.PLATFORM", false);
-        const platformCountScene = this.scene.children.filter(obj => {
+        const platformCount = this.scene.children.filter(obj => {
             return !!obj.userData[platformTag];
         }).length;
-        DebugDisplay.update("platform_count_scene", platformCountScene);
-        let platformCountUniverse = 0;
-        for (const _ of this.universe.view("platform")) platformCountUniverse++;
-        DebugDisplay.update("platform_count_universe", platformCountUniverse);
+        DebugDisplay.update("platform_count", platformCount);
+        const collectableCount = this.physics.rigidBodies.filter(body => {
+            return body.name.startsWith("CollectableSensor_");
+        }).length;
+        DebugDisplay.update("collectable_count", collectableCount);
     }
 
     public deleteEntity(uuid: string, ...attachedObjects: ExtendedObject3D[]) {

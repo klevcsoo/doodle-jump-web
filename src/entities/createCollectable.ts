@@ -73,6 +73,8 @@ function createCollectableSystem(level: GameLevel): EntitySystem<ComponentMap, S
             }
 
             if (collectable.pickup) {
+                physicsObject.visible = false;
+                physicsObject.body.skipUpdate = true;
                 level.deleteEntity(uuid);
                 sendCommand("playerSystem", pickupCommand, collectable.type);
             }
