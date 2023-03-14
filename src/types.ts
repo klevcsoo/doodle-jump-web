@@ -17,6 +17,7 @@ export type ComponentMap = {
         isOnPlatform: boolean
         isOnBoostPlatform: boolean
         starsCollected: number
+        fallen: boolean
     }
     cameraDirector: {
         position: Vec3

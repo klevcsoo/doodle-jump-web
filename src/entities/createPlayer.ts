@@ -53,7 +53,8 @@ export function createPlayer(level: GameLevel, at: Vec3) {
         altitude: 0,
         isOnPlatform: false,
         isOnBoostPlatform: false,
-        starsCollected: parseInt(localStorage.getItem(starsKey) ?? "0")
+        starsCollected: parseInt(localStorage.getItem(starsKey) ?? "0"),
+        fallen: false
     });
     level.universe.attachComponent(uuid, "inputReceiver", createInputReceiver());
     level.universe.attachComponent(uuid, "physicsObject", object3D);
@@ -73,6 +74,9 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
     const pickupCommand = getGameConfig("COMMAND.COLLECTABLE.PICKUP", false);
     const platformTag = getGameConfig("OBJECT.TAG.PLATFORM", false);
     const boostPlatformTag = getGameConfig("OBJECT.TAG.BOOST_PLATFORM", false);
+    const maxVSpace = getGameConfig("PLATFORM.GENERATION.MAX_VERTICAL_SPACE", true);
+    const maxAltitudeKey = getGameConfig("STORAGE.KEY.MAX_ALTITUDE", false);
+    const starsKey = getGameConfig("STORAGE.KEY.STARS", false);
 
     return ({createView, handleCommand}) => {
         const view = createView(
@@ -82,6 +86,10 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
         for (const {
             inputReceiver, physicsObject, collisionSensor, player, cameraDirector
         } of view) {
+
+            if (player.fallen) {
+                continue;
+            }
 
             // activating jump sensor if it hasn't been already
             if (!collisionSensor.active) {
@@ -115,6 +123,8 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
             physicsObject.body.setVelocityX(xVel);
 
             // jumping if close to ground and falling
+            // if not
+            // save and end game if player has fallen down too far
             if (player.isOnPlatform && physicsObject.body.velocity.y <= 0) {
 
                 if (player.isOnBoostPlatform) {
@@ -125,13 +135,28 @@ function createPlayerSystem(): EntitySystem<ComponentMap, SystemList> {
                     physicsObject.body.setVelocityY(playerJumpVelocity);
                 }
 
+            } else if (physicsObject.position.y < player.altitude - maxVSpace * 2) {
+
+                // save progress
+                const savedMax = localStorage.getItem(maxAltitudeKey) ?? 0;
+                if (player.altitude > savedMax) {
+                    localStorage.setItem(maxAltitudeKey, String(player.altitude));
+                }
+                localStorage.setItem(starsKey, String(player.starsCollected));
+
+                // inform that the game is over
+                player.fallen = true;
+                alert("Game Over");
+                window.location.reload();
             }
 
             // updating camera director position
             cameraDirector.position.copy(physicsObject.position);
 
             // setting player altitude
-            player.altitude = Math.floor(physicsObject.position.y);
+            player.altitude = Math.max(
+                player.altitude, Math.floor(physicsObject.position.y)
+            );
 
             // handling collectable pickup
             handleCommand(pickupCommand, () => {
